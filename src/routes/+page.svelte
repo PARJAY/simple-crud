@@ -62,6 +62,10 @@
     isEditing = false;
     itemToEdit = null;
   }
+  
+  function handleDelete(id: number) {
+    dataMakananPaleo = dataMakananPaleo.filter(item => item.id !== id);
+  }
 </script>
 
 <svelte:head>
@@ -91,5 +95,6 @@
     onIncrementStok={incrementStok}
     onDecrementStok={decrementStok}
     onEdit={handleEdit}
+    onDelete={handleDelete}
   />
 </div>
