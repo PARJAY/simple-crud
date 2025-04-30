@@ -2,7 +2,7 @@
   // @ts-ignore
   import DataTable from '$lib/components/DataTable.svelte';
   import type { PaleoFood } from '$lib/models/paleo-food.model';
-  import AddDataForm from '$lib/components/AddDataForm.svelte';
+  import DataForm from '$lib/components/DataForm.svelte';
 
   let dataMakananPaleo: PaleoFood[] = [
     { id: 1, namaMakanan: 'Daging Sapi (Grass-Fed)', manfaat: 'Sumber protein dan zat besi yang baik.', stok: 10 },
@@ -30,16 +30,37 @@
     isAdding = true;
   }
 
-  function handleBatalTambahData() {
-    isAdding = false;
-  }
-
-  function handleSimpanData(newData: Omit<PaleoFood, 'id'>) {
-    // Generate ID baru (sederhana: +1 dari ID terakhir atau 1 jika kosong)
+  function handleSimpanDataBaru(newData: Omit<PaleoFood, 'id'>) {
     const newId = dataMakananPaleo.length > 0 ? Math.max(...dataMakananPaleo.map(item => item.id)) + 1 : 1;
     const newItem: PaleoFood = { id: newId, ...newData };
     dataMakananPaleo = [...dataMakananPaleo, newItem];
     isAdding = false;
+  }
+
+  let isEditing = false;
+  let editingId: number | null = null;
+  let itemToEdit: PaleoFood | null = null;
+
+  function handleEdit(id: number) {
+    editingId = id;
+    itemToEdit = dataMakananPaleo.find(item => item.id === id) || null;
+    isEditing = true;
+    isAdding = false;
+  }
+
+  function handleSimpanPerubahanData(updatedData: PaleoFood) {
+    dataMakananPaleo = dataMakananPaleo.map(item =>
+      item.id === updatedData.id ? updatedData : item
+    );
+    isEditing = false;
+    editingId = null;
+  }
+
+
+  function handleBatalDataForm() {
+    isAdding = false;
+    isEditing = false;
+    itemToEdit = null;
   }
 </script>
 
@@ -48,7 +69,6 @@
 </svelte:head>
 
 
-<!-- bg black and opacity should be here in +page.svelte when dialog is open -->
 <div class="container mx-auto p-4">
   <h1 class="text-2xl font-bold mb-4">Daftar Makanan Paleo</h1>
 
@@ -56,14 +76,20 @@
     Tambah Data
   </button>
 
-  {#if isAdding}
-    <div class="fixed top-0 left-0 w-full h-full flex bg-black opacity-30 justify-center items-center"></div>
-    <AddDataForm onCancel={handleBatalTambahData} onSave={handleSimpanData} />
+  {#if isAdding || isEditing}
+    <div class="fixed top-0 left-0 w-full h-full flex bg-black opacity-60 justify-center items-center"></div>
+    <DataForm
+      onCancel={handleBatalDataForm}
+      onSaveNew={handleSimpanDataBaru}
+      onSaveEdit={handleSimpanPerubahanData}
+      initialData={itemToEdit}
+    />
   {/if}
 
   <DataTable
     data={dataMakananPaleo}
     onIncrementStok={incrementStok}
     onDecrementStok={decrementStok}
+    onEdit={handleEdit}
   />
 </div>

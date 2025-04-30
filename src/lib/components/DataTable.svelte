@@ -4,6 +4,7 @@
   export let data: PaleoFood[] = [];
   export let onIncrementStok;
   export let onDecrementStok;
+  export let onEdit: (id: number) => void;
 </script>
 
 <div class="overflow-x-auto">
@@ -35,7 +36,7 @@
           </td>
           <td class="border border-gray-300 p-2">
             <div class="flex space-x-2">
-              <button class="flex-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded">Edit</button>
+              <button class="flex-1 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded" on:click={() => onEdit?.(item.id)}>Edit</button>
               <button class="flex-1 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Hapus</button>
             </div>
           </td>
