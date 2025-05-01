@@ -52,6 +52,7 @@
     dataMakananPaleo = dataMakananPaleo.map(item =>
       item.id === updatedData.id ? updatedData : item
     );
+    itemToEdit = null
     isEditing = false;
     editingId = null;
   }
